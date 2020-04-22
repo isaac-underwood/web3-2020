@@ -31,14 +31,16 @@ def loadData():
 @app.route('/countries', methods=['GET'])
 @app.route('/countries/<country_name>', methods=['GET'])
 def getCountries(country_name=None):
-    for file in os.listdir(app.config['FILES_FOLDER']):
-        filename = os.fsdecode(file)
-        path = os.path.join(app.config['FILES_FOLDER'],filename)
-        f = open(path)
-        r = csv.reader(f)
-        d = list(r)
-        for data in d:
-            print(data)
+    country_ = Country(name='New Zealand')
+    country_.save()
+    # for file in os.listdir(app.config['FILES_FOLDER']):
+    #     filename = os.fsdecode(file)
+    #     path = os.path.join(app.config['FILES_FOLDER'],filename)
+    #     f = open(path)
+    #     r = csv.reader(f)
+    #     d = list(r)
+    #     for data in d:
+    #         print(data)
     return 'test', 200
 
 
