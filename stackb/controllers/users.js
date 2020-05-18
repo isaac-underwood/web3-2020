@@ -1,0 +1,1 @@
+module.exports = index => (req, res) => res.status(200).send('respond with a resource');
