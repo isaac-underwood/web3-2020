@@ -3,8 +3,10 @@ from mongoengine import *
 from pymongo import MongoClient
 import csv
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.config.from_object('config')
 connect()
 
@@ -13,10 +15,6 @@ countries = {}
 class Country(Document):
     name = StringField()
     data = DictField()
-
-class Data(EmbeddedDocument):
-    name = StringField()
-    content = DictField()
 
 @app.route('/')
 @app.route('/index')
@@ -100,10 +98,6 @@ def addCountry():
 def showTest():
     title = 'Test'
     return render_template('test.html', title=title), 200
-
-def checkCountryExists(c):
-    # Loop through countries and check if name is present in any country name
-    return any(Country.name is c for c in Country.objects)
 
 if __name__ =="__main__":
     app.run(debug=True, host='0.0.0.0', port=8080)
