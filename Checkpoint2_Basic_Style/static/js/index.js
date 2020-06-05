@@ -367,12 +367,116 @@ $("button#testButton").on("click", showAllCountries());
 //     });
 // }
 
+function createAxis() {
+    // Various scales. These domains make assumptions of data, naturally.
+    var xScale = d3.scaleLog().domain([300, 1e5]).range([0, width]),
+        yScale = d3.scaleLinear().domain([10, 85]).range([height, 0]),
+        radiusScale = d3.scaleSqrt().domain([0, 5e8]).range([0, 40]);
+    // The x & y axes.
+    var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(12, d3.format(",d"));
+    var yAxis = d3.svg.axis().scale(yScale).orient("left");
+    // Create the SVG container and set the origin.
+    var svg = d3.select("#vis").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    // Add the x-axis.
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(xScale));
+    // Add the y-axis.
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(yScale));
+}
+
 async function showAllCountries() {
     try {
         let response = await fetch('/countries');
-        let result = await response.json();
+        let countries = await response.json();
 
+        console.log(countries);
+        var g = d3.select("svg").selectAll("g").data(countries);
+
+        let margin = { top: 50, right: 40, bottom: 50, left: 50 };
+
+        let height = 900 - margin.top - margin.bottom;
+        let width = 1200 - margin.left - margin.right;
+        //console.log(countries, d => d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["1950"]);
+
+        var testmax = d3.max(countries, d => {
+            if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
+                return +d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2010"];
+            }
+        });
+
+        var testmax2 = d3.max(countries, d => {
+            if (d.data.military_expenditure_percent_of_gdp) {
+                return +d.data.military_expenditure_percent_of_gdp["2010"];
+            }
+        });
+
+        console.log(testmax2)
+
+        // var xAxis = d3.scaleLinear()
+        //     .domain([0, testmax])
+        //     .range([marginLeft, width - marginRight])
+        //     .interpolate(d3.interpolateRound);
+
+        // Create axis
+        let xAxis = d3.scaleLinear()
+            .range([0, width])
+            .domain([0, testmax])
+            .interpolate(d3.interpolateRound);
         
+        let yAxis = d3.scaleLinear()
+            .range([height, 0])
+            .domain([0, testmax2])
+            .interpolate(d3.interpolateRound);
+
+        d3.select("#vis").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
+
+        d3.select("#vis")
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + height + ")")
+            .call(d3.axisBottom(xAxis));
+
+        d3.select("#vis")
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+            .call(d3.axisLeft(yAxis));
+
+        // create new 'g' elements for each country
+        var en = g.enter().append("g");
+
+        // add a circle to each 'g'
+        var circle = en.append("circle")
+            .attr("r", (d) => { return Math.sqrt(d.data.population_total["2000"] * 0.00001); })
+            .attr("fill", (d,i) => { return i % 2 == 0 ? "red" : "blue" })
+            .attr("cx", (d) => xAxis(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2010"]))
+            .attr("cy", (d) => yAxis(d.data.military_expenditure_percent_of_gdp["2010"]));
+
+
+        // Change size of circle as a transition
+        d3.selectAll("circle").transition()
+            .duration(750)
+            .delay(function(d, i) { return i * 10; })
+            .attr("r", function(d) { return Math.sqrt(d.data.population_total["2000"] * 0.0001); });
+            
+        // for (let i = 0; i < 50; i++) {
+        //     console.log(countries[i].data.income_per_person_gdppercapita_ppp_inflation_adjusted)
+        // }
+        
+
+        //var yAxis = d3.scaleBand()
+        // add a text to each 'g'
+        en.append("text").text((d) => { return d.name });
     }
     catch(e) {
         console.error(e);
