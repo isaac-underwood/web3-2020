@@ -459,6 +459,32 @@ async function showAllCountries() {
     	// 	.attr("height", box.height)
     	// 	.on("mouseover", enableInteraction);
 
+        
+
+        var tooltip = d3.select("body")
+            .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("background-color", "white")
+                .style("border", "solid")
+                .style("border-width", "1px")
+                .style("border-radius", "5px")
+                .style("padding", "10px");
+
+        var mouseover = function(d) {
+            console.log(d);
+            tooltip
+                .style("opacity", 1);
+        }
+        
+        // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+        var mouseleave = function(d) {
+            tooltip
+                .transition()
+                .duration(200)
+                .style("opacity", 0);
+        }
+
         // create new 'g' elements for each country
         var en = g.enter().append("g");
 
@@ -475,6 +501,31 @@ async function showAllCountries() {
                 if (d.data.armed_forces_personnel_total) {
                     return yAxis(d.data.armed_forces_personnel_total["1988"]);
                 }
+            })
+            .on('mouseover', () => {
+                tooltip
+                    .transition()
+                    .duration(200)
+                    .style('opacity', 0.9);
+                  tooltip
+                    .html("test")
+                    .style('left', d3.event.pageX + 25 + 'px')
+                    .style('top', d3.event.pageY - 50 + 'px');
+            })
+            .on('mousemove', function(d) {
+                tooltip
+                  .html(
+                      "Country: " + d.name + "<br/>" +
+                      "Population: " + d.data.population_total["2017"]
+                      )
+                  .style("left", (d3.event.pageX + 25 + "px")) // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+                  .style("top", d3.event.pageY - 50 + "px");
+            })
+            .on('mouseout', () => {
+                tooltip
+                .transition()
+                .duration(500)
+                .style('opacity', 0);
             });
         
         circle.append("text").text((d) => { return d.name });
