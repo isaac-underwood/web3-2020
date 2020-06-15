@@ -368,7 +368,17 @@ $("button#testButton").on("click", showAllCountries());
 // }
 
 
+const formatComma = d3.format(",");
 
+// Returns population for a country at starting year
+function radius(d) {
+     return d.data.population_total["1800"]; 
+}
+
+// A sort order so that smaller circles are drawn on top of bigger ones
+function order(a, b) { 
+    return radius(b) - radius(a); 
+}
 
 async function showAllCountries() {
     try {
@@ -386,13 +396,13 @@ async function showAllCountries() {
 
         var x_max = d3.max(countries, d => {
             if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
-                return +d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2010"];
+                return +d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2017"];
             }
         });
 
         var y_max = d3.max(countries, d => {
             if (d.data.armed_forces_personnel_total) {
-                return +d.data.armed_forces_personnel_total["2010"];
+                return +d.data.armed_forces_personnel_total["2017"];
             }
         });
 
@@ -433,7 +443,7 @@ async function showAllCountries() {
                 .attr("text-anchor", "end")
                 .attr("x", width)
                 .attr("y", height - 5)
-                .text("Income per person (GDP per capita)");
+                .text("Income per Person (GDP per capita)");
 
         d3.select("#vis")
             .append("text")
@@ -502,6 +512,7 @@ async function showAllCountries() {
                     return yAxis(d.data.armed_forces_personnel_total["1988"]);
                 }
             })
+            .sort(order)
             .on('mouseover', () => {
                 tooltip
                     .transition()
@@ -516,8 +527,11 @@ async function showAllCountries() {
                 tooltip
                   .html(
                       "Country: " + d.name + "<br/>" +
-                      "Population: " + d.data.population_total["2017"]
+                      "Population: " + formatComma(d.data.population_total["2017"]) + "<br/>" +
+                      "Income per Person (GDP per capita): " + formatComma(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2017"]) + "<br/>" +
+                      "Armed Forces Personnel (Total): " + formatComma(d.data.armed_forces_personnel_total["2017"])
                       )
+                      .style("font-weight", "bold")
                   .style("left", (d3.event.pageX + 25 + "px")) // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
                   .style("top", d3.event.pageY - 50 + "px");
             })
