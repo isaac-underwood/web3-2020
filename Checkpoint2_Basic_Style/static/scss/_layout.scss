@@ -67,6 +67,11 @@ body {
     align-self: flex-end;
 }
 
+svg {
+    width: 100%;
+    height: 100%;
+}
+
 p {
     font-family: $body-font;
 }
@@ -82,4 +87,16 @@ h1 {
 
 #page-scrolling {
     background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7119048302914917) 0%, rgba(0, 0, 0, 0.7035014689469538) 100%), url("../img/apple-iphone-11-page.png");
+}
+
+
+#vis {
+
+   // margin-left: 10% !important;
+}
+
+.overlay {
+    fill: none;
+    pointer-events: all;
+    cursor: ew-resize;
 }

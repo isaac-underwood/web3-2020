@@ -367,30 +367,7 @@ $("button#testButton").on("click", showAllCountries());
 //     });
 // }
 
-function createAxis() {
-    // Various scales. These domains make assumptions of data, naturally.
-    var xScale = d3.scaleLog().domain([300, 1e5]).range([0, width]),
-        yScale = d3.scaleLinear().domain([10, 85]).range([height, 0]),
-        radiusScale = d3.scaleSqrt().domain([0, 5e8]).range([0, 40]);
-    // The x & y axes.
-    var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(12, d3.format(",d"));
-    var yAxis = d3.svg.axis().scale(yScale).orient("left");
-    // Create the SVG container and set the origin.
-    var svg = d3.select("#vis").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    // Add the x-axis.
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(xScale));
-    // Add the y-axis.
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(d3.axisLeft(yScale));
-}
+
 
 
 async function showAllCountries() {
@@ -402,23 +379,10 @@ async function showAllCountries() {
 
         var g = d3.select("svg").selectAll("g").data(countries);
 
-        let margin = { top: 50, right: 40, bottom: 50, left: 50 };
+        let margin = { top: 50, right: 40, bottom: 70, left: 250 };
 
-        let height = 900 - margin.top - margin.bottom;
-        let width = 1200 - margin.left - margin.right;
-        
-
-        // // Finds (and possibly interpolates) the value for the specified year.
-        // function interpolateValues(values, year) {
-        //     let i = bisect.left(values, year, 0, values.length - 1);
-        //     let a = values[i];
-        //     if (i > 0) {
-        //         var b = values[i - 1],
-        //         t = (year - a[0]) / (b[0] - a[0]);
-        //         return a[1] * (1 - t) + b[1] * t;
-        //     }
-        //     return a[1];
-        // }
+        let height = 850 - margin.top - margin.bottom;
+        let width = 1750 - margin.left - margin.right;
 
         var x_max = d3.max(countries, d => {
             if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
@@ -464,6 +428,21 @@ async function showAllCountries() {
             .attr("transform", "translate(" + margin.left + "," + 0 + ")")
             .call(d3.axisLeft(yAxis));
 
+        d3.select("#vis")
+            .append("text")
+                .attr("text-anchor", "end")
+                .attr("x", width)
+                .attr("y", height - 5)
+                .text("Income per person (GDP per capita)");
+
+        d3.select("#vis")
+            .append("text")
+                .attr("text-anchor", "end")
+                .attr("transform", "rotate(-90)")
+                .attr("y", margin.left + 20)
+                .attr("x", -margin.top)
+                .text("Armed Forces Personnel (Total)");
+
         // // Add the year label; the value is set on transition.
         // let label = d3.select("#vis").append("text")
         //     .attr("class", "year label")
@@ -485,30 +464,51 @@ async function showAllCountries() {
 
         // add a circle to each 'g'
         var circle = en.append("circle")
-            .attr("area", (d) => { return d3.scaleSqrt().domain([0, d3.max(d.data.population_total["2010"])]); })
+            .attr("area", (d) => { return d3.scaleSqrt().domain([0, d3.max(d.data.population_total["1800"])]); })
             .attr("fill", (d,i) => { return d3.scaleOrdinal(countries.map(d => d.region)) })
             .attr("cx", (d) => {
                 if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
-                    return xAxis(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2010"]);
+                    return xAxis(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["1800"]);
                 }
             })
             .attr("cy", (d) => {
                 if (d.data.armed_forces_personnel_total) {
-                    return yAxis(d.data.armed_forces_personnel_total["2010"]);
+                    return yAxis(d.data.armed_forces_personnel_total["1988"]);
                 }
             });
         
         circle.append("text").text((d) => { return d.name });
         circle.append("income").text(d => { if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
-            return d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2010"]}});
+            return d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["1800"]}});
         // Change size of circle as a transition
         d3.selectAll("circle").transition()
             .duration(750)
             .delay(function(d, i) { return i * 10; })
-            .attr("r", function(d) { return Math.sqrt(d.data.population_total["2000"] * 0.00001); });
+            .attr("r", function(d) { return Math.sqrt(d.data.population_total["1800"] * 0.00001); });
 
         d3.select("#nRadius").on("input", function() {
             update(+this.value);
+            });
+
+        // Set an animation from initial year values to ending year values once animation button clicked
+        let animationButton = d3.select("#animation-start")
+            .on("click", () => {
+                d3.selectAll("circle")
+                    .transition()
+                    .duration(11500)
+                    .attr("cx", (d) => {
+                        if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
+                            return xAxis(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2017"]);
+                        }
+                    })
+                    .attr("cy", (d) => {
+                        if (d.data.armed_forces_personnel_total) {
+                            return yAxis(d.data.armed_forces_personnel_total["2017"]);
+                        }
+                    })
+                    .attr("r", (d) => { 
+                        return Math.sqrt(d.data.population_total["2017"] * 0.000005); 
+                    });
             });
         function update(nRadius) {
         
