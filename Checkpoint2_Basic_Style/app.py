@@ -4,17 +4,22 @@ from pymongo import MongoClient
 import csv
 import os
 from flask_cors import CORS
+from werkzeug.exceptions import HTTPException, InternalServerError
 
 app = Flask(__name__)
 CORS(app)
 app.config.from_object('config')
-connect()
+connect()  # Connect to database
 
 countries = {}
 
+
+# The Country document defines a Country collection to hold a list of
+# their names and data from Gapminder
 class Country(Document):
     name = StringField()
     data = DictField()
+
 
 @app.route('/')
 @app.route('/index')
@@ -24,10 +29,12 @@ def index():
     title = 'Home'
     return render_template('index.html', name=myName, title=title), 200
 
+
 @app.route('/inspiration')
 def inspiration():
     title = 'Inspiration'
     return render_template('inspiration.html', inspiration=inspiration, title=title), 200
+
 
 @app.route('/loadData')
 def loadData():
@@ -62,42 +69,52 @@ def loadData():
             country_.save()
     return 'Success', 200
 
+
+# Gets all country objects or a specified country object and returns them
 @app.route('/countries', methods=['GET'])
 @app.route('/countries/<country_name>', methods=['GET'])
 def getCountries(country_name=None):
-    # country_ = Country(name='New Zealand')
-    # country_.save()
-    # for file in os.listdir(app.config['FILES_FOLDER']):
-    #     filename = o s.fsdecode(file)
-    #     path = os.path.join(app.config['FILES_FOLDER'],filename)
-    #     f = open(path)
-    #     r = csv.reader(f)
-    #     d = list(r)
-    #     for data in d:
-    #         print(data)
-    return Country.objects.to_json(), 200
+    # If no country_name is specified, return all country objects
+    if country_name is None:
+        return Country.objects.to_json(), 200
+    # country_name was passed in, get and return individual country
+    else:
+        # Use first_or_404 to raise a 404 if country object
+        # with given name doesn't exist
+        c = Country.objects.filter(name=country_name).first_or_404()
+        return c.to_json(), 200
 
-@app.route('/countries/<country_name>', methods=['PUT', 'DELETE'])
-def updateCountry(country_name):
-    if checkCountryExists(country_name) is True:
-        if request.method is 'PUT': # Check request method
-            return 'Country updated', 200
-        return 'Country deleted', 200 # Not PUT, so is DELETE
-    return 'Country not found', 404
 
-@app.route('/countries/new', methods=['POST'])
-def addCountry():
-    # country = request.form.get('country') # Get form data, then obtain country_id to check if country already exists before creating it
-    # self.checkCountryExists()
-    # return 'Country already exists', 404
-    country_ = Country(name='New Zealand')
-    country_.save()
-    return 'Country added', 200
+# Updates a given country's data, must supply a country_name and the new data
+@app.route('/countries/update/<country_name>', methods=['PUT'])
+def updateCountry(country_name, new_data):
+    # Get the country object with given name
+    country_ = Country.objects.filter(name=country_name).first_or_404()
+    # Update the country's data
+    country_.data = new_data
+    return 'Successfully updated ' + country_name, 200
+
+
+# Finds country object by its name and deletes it from country table
+@app.route('/countries/delete/<country_name>', methods=['DELETE'])
+def deleteCountry(country_name):
+    country_ = Country.objects.filter(name=country_name).first_or_404()
+    print(country_name + ' was deleted from the database.')
+    country_.delete()
+    return 'Country deleted', 200
+
 
 @app.route('/test')
 def showTest():
     title = 'Test'
     return render_template('test.html', title=title), 200
 
-if __name__ =="__main__":
+
+# Handle any 500 Server Errors
+@app.errorhandler(InternalServerError)
+def handle_500(e):
+    return '500 Internal Server Error', 500
+
+
+if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=8080)
