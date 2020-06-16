@@ -81,26 +81,26 @@ def getCountries(country_name=None):
     else:
         # Use first_or_404 to raise a 404 if country object
         # with given name doesn't exist
-        c = Country.objects.filter(name=country_name).first_or_404()
+        c = Country.objects.get(name=country_name)
         return c.to_json(), 200
 
 
 # Updates a given country's data, must supply a country_name and the new data
-@app.route('/countries/update/<country_name>', methods=['PUT'])
+@app.route('/countries/update/<country_name>/', methods=['PUT'])
 def updateCountry(country_name, new_data):
     # Get the country object with given name
-    country_ = Country.objects.filter(name=country_name).first_or_404()
+    country_ = Country.objects.get(name=country_name)
     # Update the country's data
     country_.data = new_data
     return 'Successfully updated ' + country_name, 200
 
 
 # Finds country object by its name and deletes it from country table
-@app.route('/countries/delete/<country_name>', methods=['DELETE'])
+@app.route('/countries/delete/<country_name>', methods=['GET', 'DELETE'])
 def deleteCountry(country_name):
-    country_ = Country.objects.filter(name=country_name).first_or_404()
-    print(country_name + ' was deleted from the database.')
+    country_ = Country.objects.get(name=country_name)
     country_.delete()
+    print(country_name + ' was deleted from the database.')
     return 'Country deleted', 200
 
 
