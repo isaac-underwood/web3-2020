@@ -86,7 +86,7 @@ def getCountries(country_name=None):
 
 
 # Updates a given country's data, must supply a country_name and the new data
-@app.route('/countries/update/<country_name>/', methods=['PUT'])
+@app.route('/countries/update/<country_name>/<new_data>', methods=['PUT'])
 def updateCountry(country_name, new_data):
     # Get the country object with given name
     country_ = Country.objects.get(name=country_name)
@@ -96,7 +96,7 @@ def updateCountry(country_name, new_data):
 
 
 # Finds country object by its name and deletes it from country table
-@app.route('/countries/delete/<country_name>', methods=['GET', 'DELETE'])
+@app.route('/countries/delete/<country_name>', methods=['DELETE'])
 def deleteCountry(country_name):
     country_ = Country.objects.get(name=country_name)
     country_.delete()

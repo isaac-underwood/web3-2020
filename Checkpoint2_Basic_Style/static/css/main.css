@@ -2,40 +2,33 @@
 /* The typing effect */
 @keyframes typing {
   from {
-    width: 0;
-  }
+    width: 0; }
   to {
-    width: 50%;
-  }
-}
+    width: 50%; } }
+
 /* The typewriter cursor effect */
 @keyframes blink-caret {
-  from, to {
-    border-color: transparent;
-  }
+  from,
+  to {
+    border-color: transparent; }
   50% {
-    border-color: #FFFAFA;
-  }
-}
+    border-color: #FFFAFA; } }
+
 /****************************************************/
 body {
-  font-family: "Arimo", "Sans Serif";
-}
+  font-family: "Arimo", "Sans Serif"; }
 
 .header-landing {
   background-image: url("../img/artem-beliaikin-background.jpg");
   background-size: cover;
   background-repeat: no-repeat;
-  color: #FFFAFA;
-}
-.header-landing h1 {
-  font-size: 6em;
-}
+  color: #FFFAFA; }
+  .header-landing h1 {
+    font-size: 6em; }
 
 .header-landing-inspiration {
   background-image: url("../img/diego-ph-fIq0tET6llw-unsplash.jpg");
-  background-size: cover;
-}
+  background-size: cover; }
 
 .typewriter h1 {
   width: 50%;
@@ -43,33 +36,36 @@ body {
   border-right: 0.1em solid #FFFAFA;
   white-space: nowrap;
   margin: 0 auto;
-  letter-spacing: 0.03em;
-  animation: typing 2s steps(50, end), blink-caret 0.55s step-end infinite;
-}
+  letter-spacing: .03em;
+  animation: typing 2s steps(50, end), blink-caret 0.55s step-end infinite; }
 
 .wrap {
-  flex-wrap: wrap;
-}
+  flex-wrap: wrap; }
 
 .bottom {
-  align-self: flex-end;
-}
+  align-self: flex-end; }
+
+svg {
+  width: 100%;
+  height: 100%; }
 
 p {
-  font-family: "Arimo", "Sans Serif";
-}
+  font-family: "Arimo", "Sans Serif"; }
 
 h1 {
   font-family: "Didact Gothic", "Sans Serif";
-  font-size: 3.8em;
-}
+  font-size: 3.8em; }
 
 .text-snow {
-  color: #FFFAFA;
-}
+  color: #FFFAFA; }
 
 #page-scrolling {
-  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7119048303) 0%, rgba(0, 0, 0, 0.7035014689) 100%), url("../img/apple-iphone-11-page.png");
-}
+  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.711905) 0%, rgba(0, 0, 0, 0.703501) 100%), url("../img/apple-iphone-11-page.png"); }
 
-/*# sourceMappingURL=main.css.map */
+circle {
+  stroke: #000; }
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+  cursor: ew-resize; }
