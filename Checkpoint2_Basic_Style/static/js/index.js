@@ -1,378 +1,23 @@
 $("button#testButton").on("click", showAllCountries());
 
-// async function showAllCountries() {
-//     await $.get('/countries', function(response) {
-//         var countries = JSON.parse(response);
+const margin = { top: 100, right: 40, bottom: 70, left: 250 };
 
-//         function x(d) { return d.data.income_per_person_gdppercapita_ppp_inflation_adjusted; }
+const height = 800 - margin.top - margin.bottom;
+const width = 1750 - margin.left - margin.right;
 
-//         function y(d) { return d.data.military_expenditure_percent_of_gdp; }
+// Get the selected value from y data select element
+const ySelect = document.getElementById("y-data-select");
+let yData = ySelect.value;
+let yDataNiceName = ySelect.options[ySelect.selectedIndex].text; // The text value of option - used for axis label
 
-//         function radius(d) { return d.data.population_total; }
+const startYear = "1985"; // A lot of data only starts at around 1985 for my chosen files
 
-//         function color(d) { return "red"; }
-
-//         function key(d) { return d.data.name; }
-
-//         function position(dot) {
-//             dot.attr("cx", function(d) { return xScale(x(d)); })
-//                 .attr("cy", function(d) { return yScale(y(d)); })
-//                 .attr("r", function(d) { return radiusScale(radius(d)); });
-//         }
-
-//         function interpolateData(year) {
-//             return countries.map(function(d) {
-//                 return {
-//                     name: d.name,
-//                     income: interpolateValues(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted, year),
-//                     population: interpolateValues(d.data.population_total, year),
-//                     militaryExpenditure: interpolateValues(d.data.military_expenditure_percent_of_gdp, year)
-//                 };
-//             });
-//         }
-//         var bisect = d3.bisector(function(d) { return d[0]; });
-
-//         // Finds (and possibly interpolates) the value for the specified year.
-//         function interpolateValues(values, year) {
-//             var i = bisect.left(Object.values(values), year, 0, Object.values(values).length - 1);
-//             var a = values[i];
-//             console.log(Object.keys(values[i]));
-//             if (i > 0) {
-//                 var b = values[i - 1],
-//                     t = (year - a[0]) / (b[0] - a[0]);
-//                 return a[1] * (1 - t) + b[1] * t;
-//             }
-//             return a[1];
-//         }
-
-//         function order(a, b) { return radius(b) - radius(a); }
-//         var margin = { top: 19.5, right: 19.5, bottom: 19.5, left: 39.5 },
-//             width = 960 - margin.right,
-//             height = 500 - margin.top - margin.bottom;
-
-//         // Various scales. These domains make assumptions of data, naturally.
-//         var xScale = d3.scaleLog().domain([300, 1e5]).range([0, width]),
-//             yScale = d3.scaleLinear().domain([10, 85]).range([height, 0]),
-//             radiusScale = d3.scaleSqrt().domain([0, 5e8]).range([0, 40]);
-
-//         // The x & y axes.
-//         // var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(12, d3.format(",d"));
-//         // var yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-//         // Create the SVG container and set the origin.
-//         var svg = d3.select("#vis").append("svg")
-//             .attr("width", width + margin.left + margin.right)
-//             .attr("height", height + margin.top + margin.bottom)
-//             .append("g")
-//             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-//         // Add the x-axis.
-//         svg.append("g")
-//             .attr("class", "x axis")
-//             .attr("transform", "translate(0," + height + ")")
-//             .call(d3.axisBottom(xScale));
-
-//         // Add the y-axis.
-//         svg.append("g")
-//             .attr("class", "y axis")
-//             .call(d3.axisLeft(yScale));
-
-//         // Add an x-axis label.
-//         svg.append("text")
-//             .attr("class", "x label")
-//             .attr("text-anchor", "end")
-//             .attr("x", width)
-//             .attr("y", height - 6)
-//             .text("income per capita, inflation-adjusted (dollars)");
-
-//         // Add a y-axis label.
-//         svg.append("text")
-//             .attr("class", "y label")
-//             .attr("text-anchor", "end")
-//             .attr("y", 6)
-//             .attr("dy", ".75em")
-//             .attr("transform", "rotate(-90)")
-//             .text("military expenditure (percent of gdp)");
-
-//         // Add the year label; the value is set on transition.
-//         var label = svg.append("text")
-//             .attr("class", "year label")
-//             .attr("text-anchor", "end")
-//             .attr("y", height - 24)
-//             .attr("x", width)
-//             .text(1800);
-//         var format = d3.format(".2s");
-//         // var tip = d3.tip()
-//         //     .attr('class', 'd3-tip')
-//         //     .direction('s')
-//         //     .html(function(d) {
-//         //         return "<p><strong>" + d.name + "</strong></p><p><strong>Population: </strong>" + format(d.population) + "</p>";
-//         //     })
-
-//         // Add a dot per nation. Initialize the data at 1800, and set the colors.
-//         var dot = svg.append("g")
-//             // .call(tip)
-//             .attr("class", "dots")
-//             .selectAll(".dot")
-//             .data(interpolateData(1800))
-//             .enter().append("circle")
-//             // .on('mouseover', tip.show)
-//             // .on('mouseout', tip.hide)
-//             .attr("class", function(d) { return "dot " + d.data.name; })
-//             .style("fill", function(d) { return "red"; })
-//             .call(position)
-//             .sort(order);
-
-//     }).fail(function() {
-//         console.log("Countries not loaded");
-//     }).always(function() {
-//         console.log("this is printed no matter what");
-//     });
-// }
-
-
-// async function showAllCountries() {
-//     await $.get('/countries', function(response) {
-//         var countries = JSON.parse(response);
-//         console.log(countries[0].data.population_total["1800"])
-//         console.log(countries);
-//         // let leng = Object.keys(countries[0].data.income_per_person_gdppercapita_ppp_inflation_adjusted).length;
-//         // console.log(Object.keys(countries[0].data.income_per_person_gdppercapita_ppp_inflation_adjusted)[leng - 1]);
-
-//         // var g = d3.select("svg")
-//         //     .selectAll("g")
-//         //     .data(countries)
-//         //     .attr("height", 500);
-
-
-//         // var x = d3.scaleLinear()
-//         //     .domain([0, 100])
-//         //     .range([100, 800]);
-//         // // x.domain(d3.extent(countries, function(d) { return d.year; }));
-//         // // y.domain([0, d3.max(countries, function(d) { return d.population_total; })]);
-
-//         // g.append("g")
-//         //     .attr("transform", "translate(0,50)")
-//         //     .call(d3.axisBottom(x));
-//         var g = d3.select("#vis")
-//             .selectAll("g")
-//             .attr("width", 1000)
-//             .data(countries);
-
-
-//         var margin = { top: 10, right: 15, bottom: 40, left: 40 },
-//             width = 1000 - margin.left - margin.right,
-//             height = 750 - margin.top - margin.bottom;
-
-//         // create svg element, respecting margins
-//         var svg = d3.select("#vis")
-//             .append("svg")
-//             .attr("width", width + margin.left + margin.right)
-//             .attr("height", height + margin.top + margin.bottom)
-//             .append("g")
-//             .attr("transform",
-//                 "translate(" + margin.left + "," + margin.top + ")");
-
-//         // Add X axis
-//         var x = d3.scaleLinear().domain([0, 100000]).range([0, width]);
-//         svg
-//             .append("g")
-//             .attr("transform", "translate(0," + height + ")")
-//             .call(d3.axisBottom(x));
-
-//         // Add Y axis
-//         var y = d3.scaleLinear().domain([0, 100]).range([height, 0]);
-//         svg
-//             .append("g")
-//             .call(d3.axisLeft(y));
-
-//         // Add X axis label:
-//         svg.append("text")
-//             .attr("text-anchor", "end")
-//             .attr("x", width)
-//             .attr("y", height + margin.top + 20)
-//             .text("X axis title");
-
-//         // Y axis label:
-//         svg.append("text")
-//             .attr("text-anchor", "end")
-//             .attr("transform", "rotate(-90)")
-//             .attr("y", -margin.left + 20)
-//             .attr("x", -margin.top)
-//             .text("Y axis title")
-
-
-//         // create new 'g' elements for each country
-//         var en = g.enter().append("g")
-//             .attr("transform", function(d) {
-//                 return "translate(" + 500 + "," + 320 + ")"
-//             });
-
-//         // // // add a circle to each 'g'
-//         var circle = en.append("circle")
-//             .attr("r", function(d) { return 25; })
-//             .attr("fill", function(d, i) { return i % 2 == 0 ? "red" : "blue" })
-//             .enter();
-
-//         // // add a text to each 'g'
-//         // en.append("text").text(function(d) { return d.name });
-
-//     }).fail(function() {
-//         console.log("Countries not loaded");
-//     }).always(function() {
-//         console.log("this is printed no matter what");
-//     });
-// }
-
-
-// function chart() {
-//     const svg = d3.create("svg")
-//         .attr("viewBox", [0, 0, width, height]);
-
-//     svg.append("g")
-//         .call(xAxis);
-
-//     svg.append("g")
-//         .call(yAxis);
-
-//     svg.append("g")
-//         .call(grid);
-
-//     const circle = svg.append("g")
-//         .attr("stroke", "black")
-//         .selectAll("circle")
-//         .data(dataAt(1800), d => d.name)
-//         .join("circle")
-//         .sort((a, b) => d3.descending(a.population, b.population))
-//         .attr("cx", d => x(d.income))
-//         .attr("cy", d => y(d.lifeExpectancy))
-//         .attr("r", d => radius(d.population))
-//         .attr("fill", d => color(d.region))
-//         .call(circle => circle.append("title")
-//             .text(d => [d.name, d.region].join("\n")));
-
-//     return Object.assign(svg.node(), {
-//         update(data) {
-//             circle.data(data, d => d.name)
-//                 .sort((a, b) => d3.descending(a.population, b.population))
-//                 .attr("cx", d => x(d.income))
-//                 .attr("cy", d => y(d.lifeExpectancy))
-//                 .attr("r", d => radius(d.population));
-//         }
-//     });
-// }
-
-// function showAllCountries() {
-//     $.get('/countries', function(response) {
-//         var countries = JSON.parse(response);
-//         console.log(response);
-//         console.log(countries);
-
-
-//         var currentData = dataAt(year);
-//         chart.update(currentData);
-//         var margin = ({ top: 20, right: 20, bottom: 35, left: 40 });
-//         var radius = d3.scaleSqrt([0, 5e8], [0, width / 24]);
-//         var width, height = 560;
-
-//         var y = d3.scaleLinear([14, 86], [height - margin.bottom, margin.top]);
-//         var x = d3.scaleLog([200, 1e5], [margin.left, width - margin.right]);
-
-//         const circle = svg.append("g")
-//             .attr("stroke", "black")
-//             .selectAll("circle")
-//             .data(dataAt(1800), countries => countries.name)
-//             .join("circle")
-//             .sort((a, b) => d3.descending(a.population_total, b.population_total))
-//             .attr("cx", d => x(d.income_per_person_gdppercapita_ppp_inflation_adjusted))
-//             .attr("cy", d => y(d.military_expenditure_percent_of_gdp))
-//             .attr("r", d => radius(d.population_total))
-//             .attr("fill", d => color('red'))
-//             .call(circle => circle.append("title")
-//                 .text(d => d.name));
-
-//         grid = g => g
-//             .attr("stroke", "currentColor")
-//             .attr("stroke-opacity", 0.1)
-//             .call(g => g.append("g")
-//                 .selectAll("line")
-//                 .data(x.ticks())
-//                 .join("line")
-//                 .attr("x1", d => 0.5 + x(d))
-//                 .attr("x2", d => 0.5 + x(d))
-//                 .attr("y1", margin.top)
-//                 .attr("y2", height - margin.bottom))
-//             .call(g => g.append("g")
-//                 .selectAll("line")
-//                 .data(y.ticks())
-//                 .join("line")
-//                 .attr("y1", d => 0.5 + y(d))
-//                 .attr("y2", d => 0.5 + y(d))
-//                 .attr("x1", margin.left)
-//                 .attr("x2", width - margin.right));
-
-//         yAxis = g => g
-//             .attr("transform", `translate(${margin.left},0)`)
-//             .call(d3.axisLeft(y))
-//             .call(g => g.select(".domain").remove())
-//             .call(g => g.append("text")
-//                 .attr("x", -margin.left)
-//                 .attr("y", 10)
-//                 .attr("fill", "currentColor")
-//                 .attr("text-anchor", "start")
-//                 .text("↑ Military expenditure (million)"));
-
-//         xAxis = g => g
-//             .attr("transform", `translate(0,${height - margin.bottom})`)
-//             .call(d3.axisBottom(x).ticks(width / 80, ","))
-//             .call(g => g.select(".domain").remove())
-//             .call(g => g.append("text")
-//                 .attr("x", width)
-//                 .attr("y", margin.bottom - 4)
-//                 .attr("fill", "currentColor")
-//                 .attr("text-anchor", "end")
-//                 .text("Income per capita (dollars) →"));
-
-//         const svg = d3.create("svg").attr("viewBox", [0, 0, 560, 560]);
-//         svg.append("g")
-//             .call(xAxis);
-
-//         svg.append("g")
-//             .call(yAxis);
-
-//         svg.append("g")
-//             .call(grid);
-
-//         var g = d3.select("svg").selectAll("g").data(countries);
-
-//         // create new 'g' elements for each country
-//         var en = g.enter().append("g")
-//             .filter(function(d) { return d.data["income_per_person_gdppercapita_ppp_inflation_adjusted"] })
-//             .attr("transform", function(d) {
-//                 return "translate(" + (Math.random() * 1000) + 40 + "," + (Math.random() * 1000) + 40 + ")"
-//             });
-
-//         // add a circle to each 'g'
-//         var circle = en.append("circle")
-//             .attr("r", function(d) { return Math.random() * 20 })
-//             .attr("fill", function(d, i) { return i % 2 == 0 ? "red" : "blue" });
-
-//         // add a text to each 'g'
-//         en.append("text").text(function(d) { return d.name });
-
-//     }).fail(function() {
-//         console.log("Countries not loaded");
-//     }).always(function() {
-//         console.log("this is printed no matter what");
-//     });
-// }
-
-
+// Formats a number making it readable
 const formatComma = d3.format(",");
 
 // Returns population for a country at starting year
 function radius(d) {
-     return d.data.population_total["1800"]; 
+     return d.data.population_total[startYear]; 
 }
 
 // A sort order so that smaller circles are drawn on top of bigger ones
@@ -380,225 +25,288 @@ function order(a, b) {
     return radius(b) - radius(a); 
 }
 
+// Returns the value of the country's 'four regions' - used for colouring circles
+function color(d) {
+    return d.data.list_of_countries_geographies.four_regions
+}
+
+// Used to calculate current year shown
+let year = d3.interpolateNumber(startYear, 2017);
+
+// Set an initial year to the year label
+const yearLabel = d3.select("#current-year").text("Year: ".concat(startYear));
+
+const tweenYear = () => {
+    return function(t) { displayYear(year(t)); };
+}
+
+const displayYear = year => {
+    yearLabel.text("Year: ".concat(Math.round(year)));
+}
+
+const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+let currYear = 1985;
+
 async function showAllCountries() {
     try {
         let response = await fetch('/countries');
         let countries = await response.json();
-
+        console.log(countries[5].data[yData]);
         console.log(countries);
 
-        var g = d3.select("svg").selectAll("g").data(countries);
+        
+        
 
-        let margin = { top: 50, right: 40, bottom: 70, left: 250 };
+        const vis = d3.select("#vis");
 
-        let height = 850 - margin.top - margin.bottom;
-        let width = 1750 - margin.left - margin.right;
-
-        var x_max = d3.max(countries, d => {
-            if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
-                return +d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2017"];
-            }
+        ySelect.addEventListener("change", () => {
+            yData = ySelect.value;
+            yDataNiceName = ySelect.options[ySelect.selectedIndex].text;
+            updateVis(countries, vis)
         });
 
-        var y_max = d3.max(countries, d => {
-            if (d.data.armed_forces_personnel_total) {
-                return +d.data.armed_forces_personnel_total["2017"];
-            }
-        });
-
-        console.log(x_max);
-
-        // var xAxis = d3.scaleLinear()
-        //     .domain([0, testmax])
-        //     .range([marginLeft, width - marginRight])
-        //     .interpolate(d3.interpolateRound);
-
-        // Create axis
-        let xAxis = d3.scaleLinear()
-            .range([margin.left, width])
-            .domain([0, x_max]);
-        
-        let yAxis = d3.scaleLinear()
-            .range([height, margin.top])
-            .domain([0, y_max]);
-
-        d3.select("#vis").append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .append("g")
-            .attr("transform", "translate(0" + "," + margin.right + ")");
-
-        d3.select("#vis")
-            .append("g")
-            .attr("transform", "translate(0" + "," + height + ")")
-            .call(d3.axisBottom(xAxis));
-
-        d3.select("#vis")
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + 0 + ")")
-            .call(d3.axisLeft(yAxis));
-
-        d3.select("#vis")
-            .append("text")
-                .attr("text-anchor", "end")
-                .attr("x", width)
-                .attr("y", height - 5)
-                .text("Income per Person (GDP per capita)");
-
-        d3.select("#vis")
-            .append("text")
-                .attr("text-anchor", "end")
-                .attr("transform", "rotate(-90)")
-                .attr("y", margin.left + 20)
-                .attr("x", -margin.top)
-                .text("Armed Forces Personnel (Total)");
-
-        // // Add the year label; the value is set on transition.
-        // let label = d3.select("#vis").append("text")
-        //     .attr("class", "year label")
-        //     .attr("text-anchor", "end")
-        //     .attr("y", height - 24)
-        //     .attr("x", width)
-        //     .text(1800);
-
-        // var overlay = d3.select("#vis").append("rect")
-    	// 	.attr("class", "overlay")
-    	// 	.attr("x", box.x)
-    	// 	.attr("y", box.y)
-    	// 	.attr("width", box.width)
-    	// 	.attr("height", box.height)
-    	// 	.on("mouseover", enableInteraction);
-
+        updateVis(countries, vis);
         
 
-        var tooltip = d3.select("body")
-            .append("div")
-                .style("opacity", 0)
-                .attr("class", "tooltip")
-                .style("background-color", "white")
-                .style("border", "solid")
-                .style("border-width", "1px")
-                .style("border-radius", "5px")
-                .style("padding", "10px");
+        // svg.call(d3.zoom()
+        //     .extent([[0, 0], [width, height]])
+        //     .scaleExtent([1, 8])
+        //     .on("zoom", zoomed));
 
-        var mouseover = function(d) {
-            console.log(d);
-            tooltip
-                .style("opacity", 1);
-        }
+        // Zoom Visualisations (Programmatic Zoom)
+        // let zoomed = () => {
+        //     d3.selectAll("circle").attr("transform", d3.event.transform);
+        // }
         
-        // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-        var mouseleave = function(d) {
-            tooltip
-                .transition()
-                .duration(200)
-                .style("opacity", 0);
-        }
+        // const zoom = d3.zoom()
+        //     .scaleExtent([1, 40])
+        //     .on("zoom", zoomed);
+    
+        // let clicked = ([x, y]) => {
+        //     d3.event.stopPropagation(); // prevent event from reaching any objects other than current object
+        //     d3.selectAll("circle").transition()
+        //         .duration(750)
+        //         .call(
+        //             zoom.transform,
+        //             d3.zoomIdentity.translate(width / 2, height / 2).scale(40).translate(-x, -y),
+        //             d3.mouse(d3.selectAll("circle"))
+        //         );
+        // }
 
-        // create new 'g' elements for each country
-        var en = g.enter().append("g");
+        // d3.selectAll("circle")
+        //     .join("circle")
+        //     .on("click", clicked);
 
-        // add a circle to each 'g'
-        var circle = en.append("circle")
-            .attr("area", (d) => { return d3.scaleSqrt().domain([0, d3.max(d.data.population_total["1800"])]); })
-            .attr("fill", (d,i) => { return d3.scaleOrdinal(countries.map(d => d.region)) })
-            .attr("cx", (d) => {
-                if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
-                    return xAxis(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["1800"]);
-                }
-            })
-            .attr("cy", (d) => {
-                if (d.data.armed_forces_personnel_total) {
-                    return yAxis(d.data.armed_forces_personnel_total["1988"]);
-                }
-            })
-            .sort(order)
-            .on('mouseover', () => {
-                tooltip
-                    .transition()
-                    .duration(200)
-                    .style('opacity', 0.9);
-                  tooltip
-                    .html("test")
-                    .style('left', d3.event.pageX + 25 + 'px')
-                    .style('top', d3.event.pageY - 50 + 'px');
-            })
-            .on('mousemove', function(d) {
-                tooltip
-                  .html(
-                      "Country: " + d.name + "<br/>" +
-                      "Population: " + formatComma(d.data.population_total["2017"]) + "<br/>" +
-                      "Income per Person (GDP per capita): " + formatComma(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2017"]) + "<br/>" +
-                      "Armed Forces Personnel (Total): " + formatComma(d.data.armed_forces_personnel_total["2017"])
-                      )
-                      .style("font-weight", "bold")
-                  .style("left", (d3.event.pageX + 25 + "px")) // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-                  .style("top", d3.event.pageY - 50 + "px");
-            })
-            .on('mouseout', () => {
-                tooltip
-                .transition()
-                .duration(500)
-                .style('opacity', 0);
-            });
+        // g.call(zoom);
+
+        // Object.assign(g.selectAll("circle"), {
+        //     zoomIn: () => g.transition().call(zoom.scaleBy, 2)
+        // });
+
+
+        //zoom(g, height, width);
+        // function update(nRadius) {
         
-        circle.append("text").text((d) => { return d.name });
-        circle.append("income").text(d => { if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
-            return d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["1800"]}});
-        // Change size of circle as a transition
-        d3.selectAll("circle").transition()
-            .duration(750)
-            .delay(function(d, i) { return i * 10; })
-            .attr("r", function(d) { return Math.sqrt(d.data.population_total["1800"] * 0.00001); });
-
-        d3.select("#nRadius").on("input", function() {
-            update(+this.value);
-            });
-
-        // Set an animation from initial year values to ending year values once animation button clicked
-        let animationButton = d3.select("#animation-start")
-            .on("click", () => {
-                d3.selectAll("circle")
-                    .transition()
-                    .duration(11500)
-                    .attr("cx", (d) => {
-                        if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
-                            return xAxis(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2017"]);
-                        }
-                    })
-                    .attr("cy", (d) => {
-                        if (d.data.armed_forces_personnel_total) {
-                            return yAxis(d.data.armed_forces_personnel_total["2017"]);
-                        }
-                    })
-                    .attr("r", (d) => { 
-                        return Math.sqrt(d.data.population_total["2017"] * 0.000005); 
-                    });
-            });
-        function update(nRadius) {
+        //     // adjust the text on the range slider
+        //     d3.select("#nRadius-value").text(nRadius);
+        //     d3.select("#nRadius").property("value", nRadius);
         
-            // adjust the text on the range slider
-            d3.select("#nRadius-value").text(nRadius);
-            d3.select("#nRadius").property("value", nRadius);
-        
-            // update the circle radius
-            d3.select("#vis").selectAll("circle")
-                .attr("cx", (d) => {
-                    if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
-                        return xAxis(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted[String(nRadius)]);
-                    }
-                })
-                .attr("cy", (d) => {
-                    if (d.data.armed_forces_personnel_total) {
-                        return yAxis(d.data.armed_forces_personnel_total[String(nRadius)]);
-                    }
-                })
-                .attr("r", function(d) { return Math.sqrt(d.data.population_total[String(nRadius)] * 0.00001); });
-        }
+        //     // update the circle radius
+        //     d3.select("#vis").selectAll("circle")
+        //         .attr("cx", (d) => {
+        //             if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
+        //                 return xScale(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted[String(nRadius)]);
+        //             }
+        //         })
+        //         .attr("cy", (d) => {
+        //             if (d.data.armed_forces_personnel_total) {
+        //                 return yScale(d.data.armed_forces_personnel_total[String(nRadius)]);
+        //             }
+        //         })
+        //         .attr("r", function(d) { return Math.sqrt(d.data.population_total[String(nRadius)] * 0.00001); });
+        // }
     }
     catch(e) {
         console.error(e);
     }
+}
+
+function updateVis(countries, vis) {
+    // Remove any existing circles, axis so they are redrawn
+    d3.selectAll("g").remove();
+    d3.selectAll("text").remove();
+
+    var g = d3.select("svg").selectAll("g").enter().data(countries);
+
+    // Calculate the maximum value for X-axis
+    let x_max = d3.max(countries, d => {
+        if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
+            // Make a natural assumption of data (that income is higher as world is more developed) - 2017
+            return +d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2017"];
+        }
+    });
+
+    // Calculate the maximum value for Y-axis
+    let y_max = d3.max(countries, d => {
+        if (d.data[yData]) {
+            // Make a natural assumption of data (that military expenditure/personnel would be highest closest towards World Wars) - 1985
+            return +d.data[yData]["1985"];
+        }
+    });
+
+    // Create X Scale (For income)
+    let xScale = d3.scaleLog() // Use Log so that circles aren't so bunched up
+        .domain([100, x_max])
+        .range([margin.left, width]);
+
+    // Create Y Scale
+    let yScale = d3.scaleLinear() // Use linear as data on Y axis can change
+        .domain([0, y_max])
+        .range([height, margin.top]);
+
+    // Create x-axis using the xScale as scale
+    let xAxis = d3.axisBottom()
+        .scale(xScale)
+        .tickFormat(d => {
+            return xScale.tickFormat(15, d3.format(",d"))(d); // Set ticks, formatting them so they don't display as log numbers
+        });
+    
+    // Add the main svg
+    vis.append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate(0" + "," + margin.right + ")");
+    
+    // Add xAxis to svg
+    vis
+        .append("g")
+        .attr("transform", "translate(0" + "," + height + ")")
+        .call(xAxis);
+    
+    // Add yAxis to svg
+    vis
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+        .call(d3.axisLeft(yScale));
+    
+    // Add xAxis text label to svg
+    vis
+        .append("text")
+            .attr("text-anchor", "end")
+            .attr("x", width)
+            .attr("y", height - 5)
+            .text("Income per Person (GDP per capita)");
+
+    // Add yAxis text label to svg
+    vis
+        .append("text")
+            .attr("text-anchor", "end")
+            .attr("transform", "rotate(-90)")
+            .attr("y", margin.left + 20)
+            .attr("x", -margin.top)
+            .text(yDataNiceName); // The name of the Y-axis data set
+    
+    // Add a tooltip div
+    var tooltip = d3.select("body")
+        .append("div")
+            .style("opacity", 0)
+            .attr("class", "tooltip")
+            .style("background-color", "white")
+            .style("border", "solid")
+            .style("border-width", "1px")
+            .style("border-radius", "5px")
+            .style("padding", "10px");
+    
+    // create new 'g' elements for each country
+    var en = g.enter().append("g");
+
+    let circlesize = (d) => { return d3.scaleSqrt().domain([0, d3.max(d.data.population_total[startYear])]).range([0, 35]) };
+    
+    // add a circle to each 'g'
+    var circle = en.append("circle")
+        .attr("area", (d) => { return circlesize(d); }) // Make circle size based off population
+        .attr("fill", (d) => { 
+            if (d.data.list_of_countries_geographies) {
+                return colorScale(color(d)); // Set color based off country's region - improve user experience
+            }
+        })
+        .attr("cx", (d) => { // The circle's center X position
+            if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
+                return xScale(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted[startYear]); // Get co-ordinate space using xScale
+            }
+        })
+        .attr("cy", (d) => { // The circle's center Y position
+            if (d.data[yData]) {
+                return yScale(d.data[yData][startYear]); // Get co-ordinate space using yScale
+            }
+        })
+        .sort(order) // Sort circles based on their radius so that bigger circles don't hide small ones
+        .on('mouseover', () => { // Add a mouseover event to show tooltip
+            tooltip
+                .transition()
+                .duration(200)
+                .style('opacity', 0.9);
+              tooltip
+                .style('left', d3.event.pageX + 25 + 'px')
+                .style('top', d3.event.pageY - 50 + 'px');
+        })
+        .on('mousemove', function(d) { // Show country info in tooltip when mouse moved over circle
+            tooltip
+              .html(
+                  "Country: " + d.name + "<br/>" +
+                  "Population: " + formatComma(d.data.population_total["2017"]) + "<br/>" +
+                  "Income per Person (GDP per capita): " + formatComma(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2017"]) + "<br/>" +
+                  yDataNiceName + formatComma(d.data[yData]["2017"])
+                  )
+                  .style("font-weight", "bold")
+              .style("left", (d3.event.pageX + 25 + "px")) // Add pixels otherwise there will be a weird effect
+              .style("top", d3.event.pageY - 50 + "px");
+        })
+        .on('mouseout', () => { // Hide tooltip when mouse is not on circle
+            tooltip
+            .transition()
+            .duration(500)
+            .style('opacity', 0);
+        });
+    
+    // Change size of circle as a transition
+    d3.selectAll("circle").transition()
+        .duration(750)
+        .delay(function(d, i) { return i * 10; })
+        .attr("r", function(d) { return Math.sqrt(d.data.population_total[startYear] * 0.000005); });
+    
+    // Set an animation from initial year values to ending year values once animation button clicked
+    let animationButton = d3.select("#animation-start")
+        .on("click", () => {
+            d3.selectAll("circle")
+                .transition()
+                .ease(d3.easeCircle)
+                .duration(6000)
+                .attr("cx", (d) => {
+                    if (d.data.income_per_person_gdppercapita_ppp_inflation_adjusted) {
+                        return xScale(d.data.income_per_person_gdppercapita_ppp_inflation_adjusted["2017"]);
+                    }
+                })
+                .attr("cy", (d) => {
+                    if (d.data[yData]) {
+                        return yScale(d.data[yData]["2017"]);
+                    }
+                })
+                .attr("r", (d) => { 
+                    return Math.sqrt(d.data.population_total["2017"] * 0.000005); 
+                })
+                .tween("year", tweenYear);
+        });
+
+}
+
+
+function zoom(g, height, width) {
+    
+
+    
 }
 
 function showCountry(country) {

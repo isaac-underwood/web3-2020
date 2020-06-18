@@ -26,8 +26,16 @@
 
     <script type="text/javascript" src="{{ url_for('static', filename='js/fullpage.js') }}"></script>
 
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-color.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
     <script src="https://d3js.org/d3-ease.v1.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://d3js.org/d3-selection.v1.min.js"></script>
+    <script src="https://d3js.org/d3-timer.v1.min.js"></script>
+    <script src="https://d3js.org/d3-transition.v1.min.js"></script>
+    <script src="https://d3js.org/d3-drag.v1.min.js"></script>
+    <script src="https://d3js.org/d3-zoom.v1.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
 
     <title>{{ title }}</title>
 </head>
@@ -84,16 +92,30 @@
                     
                 </div>
             </div> -->
-            
-            <h1 class="text-center">Visualisation</h1>
-            <div class="vis-container text-center">
-                <a class="btn btn-outline-success" id="animation-start">Start Visualisation</a>
+            <div class="container">
+                <h1 class="text-center">Visualisation</h1>
+                <div class="vis-container text-center mx-auto">
+                    <button class="btn btn-outline-success" id="animation-start">Show Visualisation</button>
+                    <h5 class="mt-2" id="current-year">Year:</h5>
+                    <div class="form-inline">
+                        <div class="col-6 form-group row">
+                            <label class="col-form-label p-2" for="ydata">Y-Axis Data:</label>
+                            <select class="form-control" name="ydata" id="y-data-select">
+                                <option value="armed_forces_personnel_total">Armed Forces Personnel (Total)</option>
+                                <option value="military_expenditure_percent_of_gdp">Military Expenditure (% of GDP)</option>
+                            </select> 
+                        </div>
+                    </div>
+                    
+                                
+                </div>
             </div>
-            <svg id="vis"></svg>
-            <button id="testButton">Click for Test</button>
             
-            <input type="range" min="1800" max="2050" id="nRadius">
-            <p id="nRadius-value"></p>
+            <svg id="vis"></svg>
+            <!-- <button id="testButton">Click for Test</button> -->
+            
+            <!-- <input type="range" min="1800" max="2050" id="nRadius">
+            <p id="nRadius-value"></p> -->
             
             
         </div>
