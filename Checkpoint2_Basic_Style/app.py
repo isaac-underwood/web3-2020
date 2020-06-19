@@ -86,12 +86,13 @@ def getCountries(country_name=None):
 
 
 # Updates a given country's data, must supply a country_name and the new data
-@app.route('/countries/update/<country_name>/<new_data>', methods=['PUT'])
-def updateCountry(country_name, new_data):
+@app.route('/countries/update/<country_name>/<year>/<new_data>', methods=['PUT'])
+def updateCountry(country_name, year, new_data):
     # Get the country object with given name
     country_ = Country.objects.get(name=country_name)
     # Update the country's data
-    country_.data = new_data
+    country_.data["population_total"][year] = new_data
+    country_.save();
     return 'Successfully updated ' + country_name, 200
 
 
